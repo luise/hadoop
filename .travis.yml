@@ -1,0 +1,19 @@
+language: node_js
+node_js:
+        - 6.9.0
+        - 8.5.0
+
+install:
+        - npm install .
+        - npm install kelda/deployment-engine-downloader && ./node_modules/.bin/kelda-downloader
+
+before_script:
+        - npm install -g gulp-cli
+
+script:
+        - gulp lint
+        - ./kelda inspect ./hdfsExample.js graphviz Amazon 3
+
+notifications:
+  slack:
+    secure: ncFpjXpkhSbHfQIGRw6+KwsBrPrxLzI+w0aGYWd7bksk1p/aOJbowNQ91uVdCmpxkdP2n9tAuCr5MPP7NdMlx3MI5AwmJsojUqM4XWIVCCrDfdHTrj7BuCH0I6b8GV0b9fKm06Odu7HK9Xfi4vuIJPHjzCBWY8HFY1asT0lOzBE+rOB7PrwcS0J3nDj997fN6ibb3pzAA/zDYn0AuIPAQhzxJ2zbP++ys3Ol+xM8CyDnhFqMmOM0nzhwqrhszU09jgUXLb42kH5rvyV5frMBcTxEkN44sIvqwsZCKoxo9UvrPaJO2ODu94ssi68ejrhZEyqymjfAzMyy2uysAAzZ8Rlyp3glB7U3F5EG42Ia7f2IUf2fD2gSQH/ZUqE9m+zheROlsNuEsARXwYTovhlLKB3630AArkHXL/vIhvrm6KaeCGsfCUTrCLOdt20DLmB+Oc4wj6NM8Dly7vR5J8vzKLS6B1EYB7DJSdlHM9CGVO2cTPIV1TiugjIYh787qD023C+kt2VApstTYAOeiFfKjROvUbhpGWLp9M1bVzO7ILPsCEwNMgeJt7MR33jgXWq5H47I8DMbS6WJnxlAnbLkbgAdZwziFxy2LztrVAImiPuIxF9aGlXsQko13BU+4Dq2R+tlM7j2YA58G2deT77kt29qyAm97z56vDF7ki20lHE=
