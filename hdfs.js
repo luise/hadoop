@@ -34,6 +34,9 @@ class HDFS {
     // because some Kelda internal traffic uses port 9000.
     this.hdfsPort = 8020;
 
+    // The port that datanodes listen on for communication about reading and writing data.
+    this.datanodePort = 50010;
+
     const hdfsConfDir = '/hadoop/conf';
     // Hadoop needs to be told where to find configuration files.
     const hadoopEnv = { HADOOP_CONF_DIR: hdfsConfDir };
@@ -96,10 +99,10 @@ class HDFS {
     kelda.allow(this.datanodes, this.namenode, this.hdfsPort);
 
     // Enable the namenode to connect to datanodes (e.g., to send data).
-    kelda.allow(this.namenode, this.datanodes, 50010);
+    kelda.allow(this.namenode, this.datanodes, this.datanodePort);
 
     // Enable datanodes to connect to other datanodes (e.g., to replicate data blocks).
-    kelda.allow(this.datanodes, this.datanodes, 50010);
+    kelda.allow(this.datanodes, this.datanodes, this.datanodePort);
   }
 
   /**
@@ -114,6 +117,21 @@ class HDFS {
 
     // Expose the datanode UI.
     kelda.allow(kelda.publicInternet, this.datanodes, 50075);
+  }
+
+  /**
+   * Allows the given containers to access HDFS to read and write data.
+   */
+  enableAccess(containers) {
+    containers.forEach((c) => {
+      // The containers need to access the namenode, which serves as the gateway
+      // to the HDFS cluster, and which will communicate which datanodes to fetch
+      // a particular file from.
+      kelda.allow(c, this.namenode, this.hdfsPort);
+      // Containers will also need to directly access datanodes, in order to read and
+      // write files.
+      kelda.allow(c, this.datanodes, this.datanodePort);
+    });
   }
 
   deploy(deployment) {
