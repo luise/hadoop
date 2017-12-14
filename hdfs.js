@@ -71,13 +71,17 @@ class HDFS {
       }));
     }
 
-    const datanodesString = this.datanodes.map(x => x.getHostname()).join('\n');
     this.namenodeURI = `hdfs://${this.namenode.getHostname()}:${this.hdfsPort}`;
 
     // Generate all of the configuration files.
     const hdfsConfigFiles = {};
     hdfsConfigFiles[path.join(hdfsConfDir, 'masters')] = `${this.namenode.getHostname()}\n`;
-    hdfsConfigFiles[path.join(hdfsConfDir, 'slaves')] = `${datanodesString}\n`;
+
+    // HDFS is typically configured with a 'slaves' file that lists all of the datanodes,
+    // and that's used by utility commands in the sbin/ directory that help with running
+    // commands on all of the datanodes. Kelda doesn't rely on those commands, and including
+    // a 'slaves' file means that the entire cluster is re-started each time a slave is added
+    // or removed, so we don't include it.
 
     const coreSiteTemplate = fs.readFileSync(
       path.join(__dirname, 'conf/core-site.xml'), { encoding: 'utf8' });
