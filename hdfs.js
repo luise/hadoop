@@ -100,13 +100,13 @@ class HDFS {
 
     // Configure the network.
     // Enable datanodes to connect to the namenode (e.g., to send heartbeats).
-    kelda.allow(this.datanodes, this.namenode, this.hdfsPort);
+    kelda.allowTraffic(this.datanodes, this.namenode, this.hdfsPort);
 
     // Enable the namenode to connect to datanodes (e.g., to send data).
-    kelda.allow(this.namenode, this.datanodes, this.datanodePort);
+    kelda.allowTraffic(this.namenode, this.datanodes, this.datanodePort);
 
     // Enable datanodes to connect to other datanodes (e.g., to replicate data blocks).
-    kelda.allow(this.datanodes, this.datanodes, this.datanodePort);
+    kelda.allowTraffic(this.datanodes, this.datanodes, this.datanodePort);
   }
 
   /**
@@ -117,10 +117,10 @@ class HDFS {
    */
   exposeUIToPublic() {
     // Expose the namenode UI.
-    kelda.allow(kelda.publicInternet, this.namenode, 50070);
+    kelda.allowTraffic(kelda.publicInternet, this.namenode, 50070);
 
     // Expose the datanode UI.
-    kelda.allow(kelda.publicInternet, this.datanodes, 50075);
+    kelda.allowTraffic(kelda.publicInternet, this.datanodes, 50075);
   }
 
   /**
@@ -131,10 +131,10 @@ class HDFS {
       // The containers need to access the namenode, which serves as the gateway
       // to the HDFS cluster, and which will communicate which datanodes to fetch
       // a particular file from.
-      kelda.allow(c, this.namenode, this.hdfsPort);
+      kelda.allowTraffic(c, this.namenode, this.hdfsPort);
       // Containers will also need to directly access datanodes, in order to read and
       // write files.
-      kelda.allow(c, this.datanodes, this.datanodePort);
+      kelda.allowTraffic(c, this.datanodes, this.datanodePort);
     });
   }
 
