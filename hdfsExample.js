@@ -13,7 +13,10 @@ console.log(`Starting HDFS cluster on ${provider} with ${numDatanodes} datanodes
 // Start one Kelda worker machine for each datanode (i.e., for each HDFS worker), and one
 // additional Kelda worker machine for the namenode (i.e., the HDFS master) to run on.
 const machine = new kelda.Machine({ provider });
-const inf = new kelda.Infrastructure(machine, machine.replicate(numDatanodes + 1));
+const inf = new kelda.Infrastructure({
+  masters: machine,
+  workers: machine.replicate(numDatanodes + 1),
+});
 
 const h = new hdfs.HDFS(numDatanodes);
 h.exposeUIToPublic();

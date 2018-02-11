@@ -27,7 +27,7 @@ class HDFS {
    * containers that store data), and a single namenode that manages the cluster.
    */
   constructor(nDatanodes) {
-    const image = new kelda.Image('keldaio/hdfs');
+    const image = 'keldaio/hdfs';
 
     // The port that datanodes and external services use to communicate with the namenode.
     // This blueprint uses 8020 rather than 9000, which is the most commonly used port for HDFS,
@@ -41,7 +41,9 @@ class HDFS {
     // Hadoop needs to be told where to find configuration files.
     const hadoopEnv = { HADOOP_CONF_DIR: hdfsConfDir };
 
-    this.namenode = new kelda.Container('hdfs-namenode', image, {
+    this.namenode = new kelda.Container({
+      name: 'hdfs-namenode',
+      image,
       command: ['sh', '-c',
         // Start by formatting the namenode. This needs to be done here (and not in the
         // Dockerfile) because it needs to be done after the configuration files have
@@ -60,7 +62,9 @@ class HDFS {
 
     this.datanodes = [];
     for (let i = 0; i < nDatanodes; i += 1) {
-      this.datanodes.push(new kelda.Container('hdfs-datanode', image, {
+      this.datanodes.push(new kelda.Container({
+        name: 'hdfs-datanode',
+        image,
         command: ['sh', '-c',
           // As above, use the hadoop-daemon.sh script to start the datanode so that
           // the logs are in /hadoop/logs, where users (and the web UI) expect to find
